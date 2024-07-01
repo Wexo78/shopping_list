@@ -13,12 +13,12 @@ Future<List<ListItem>> fetchItems() async {
   return itemList;
 }
 
-void deleteItem(String id) async {
+Future<void> deleteItem(String id) async {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   await db.collection('listItems').doc(id).delete();
 }
 
-void addItem(String itemName, int amount) async {
+Future<void> addItem(String itemName, int amount) async {
   final ItemData =
       ListItem(id: '', itemName: itemName, amount: amount, acquired: false)
           .toFirestore();
@@ -26,7 +26,7 @@ void addItem(String itemName, int amount) async {
   await db.collection('listItems').add(ItemData);
 }
 
-void toggleAcquiredProvider(ListItem item) async {
+Future<void> toggleAcquiredProvider(ListItem item) async {
   print('Came to provider toggle');
   if (item.id.isNotEmpty) {
     final newValue = item.toggleAcquired();

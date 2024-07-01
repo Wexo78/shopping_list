@@ -56,9 +56,13 @@ class _ItemsScreenState extends State<ItemsScreen> {
                               },
                               icon: const Icon(Icons.delete_rounded)),
                           title: GestureDetector(
-                            onTap: () {
-                              toggleAcquiredProvider(item);
-                              setState(() {});
+                            onTap: () async {
+                              //  print('****Tultiin Gestureen, item: $item');
+                              await toggleAcquiredProvider(item);
+                              //   print('****** mentiin togglen ohi *****');
+                              setState(() {
+                                //     print('**** Tultiin stateen ******');
+                              });
                             },
                             child: Text(
                               item.itemName,
@@ -146,6 +150,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   if (_keyDialogForm.currentState!.validate()) {
                     addItem(
                         itemController.text, int.parse(amountController.text));
+                    itemController.clear();
+                    amountController.clear();
                     setState(() {});
                     Navigator.pop(context);
                   }
@@ -162,5 +168,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
             ],
           );
         });
+  }
+
+  void dispose() {
+    itemController.dispose();
+    amountController.dispose();
+    super.dispose();
   }
 }
