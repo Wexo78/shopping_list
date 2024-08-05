@@ -9,7 +9,7 @@ Future<List<ListItem>> fetchItems() async {
   final docRef = await db.collection('listItems').get();
   docRef.docs.forEach(
       (doc) => itemList.add(ListItem.fromFireStore(doc.id, doc.data())));
-  print(itemList);
+
   return itemList;
 }
 
@@ -26,8 +26,24 @@ Future<void> addItem(String itemName, int amount) async {
   await db.collection('listItems').add(ItemData);
 }
 
+Future<void> editItem(String id, String itemName, int amount) async {
+  final FirebaseFirestore db = FirebaseFirestore.instance;
+  final data = {
+    'itemName': itemName,
+    'amount': amount,
+  };
+  await db.collection('listItems').doc(id).set(data, SetOptions(merge: true));
+}
+
+Future<void> deleteAll() async {
+  final snapshot =
+      await FirebaseFirestore.instance.collection('listItems').get();
+  for (DocumentSnapshot ds in snapshot.docs) {
+    ds.reference.delete();
+  }
+}
+
 Future<void> toggleAcquiredProvider(ListItem item) async {
-  print('Came to provider toggle');
   if (item.id.isNotEmpty) {
     final newValue = item.toggleAcquired();
     final data = {'acquired': newValue};

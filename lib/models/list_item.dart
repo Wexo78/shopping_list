@@ -27,7 +27,6 @@ class ListItem {
   }
 
   bool toggleAcquired() {
-    print('acquired: $acquired');
     if (acquired) {
       acquired = false;
     } else {

@@ -10,7 +10,8 @@ class StartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Column(
+      height: double.infinity,
+      child: ListView(
         children: [
           const SizedBox(
             height: 20,
@@ -21,6 +22,7 @@ class StartScreen extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
             textScaler: const TextScaler.linear(1.5),
+            textAlign: TextAlign.center,
           ),
           const SizedBox(height: 30),
           Image.asset(

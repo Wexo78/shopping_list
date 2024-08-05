@@ -49,12 +49,24 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                   : TextDecoration.none,
                             ),
                           ),
-                          trailing: IconButton(
-                              onPressed: () {
-                                deleteItem(item.id);
-                                setState(() {});
-                              },
-                              icon: const Icon(Icons.delete_rounded)),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                  onPressed: () {
+                                    //  deleteItem(item.id);
+                                    showaddItemDialog(item: item);
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(Icons.edit)),
+                              IconButton(
+                                  onPressed: () {
+                                    deleteItem(item.id);
+                                    setState(() {});
+                                  },
+                                  icon: const Icon(Icons.delete_rounded)),
+                            ],
+                          ),
                           title: GestureDetector(
                             onTap: () async {
                               //  print('****Tultiin Gestureen, item: $item');
@@ -77,9 +89,23 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   ),
                 ),
                 //...content.map((item) => Text(item.itemName)),
-                IconButton.filled(
-                    onPressed: () => showaddItemDialog(),
-                    icon: const Icon(Icons.add)),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton.filled(
+                        onPressed: () => showaddItemDialog(),
+                        icon: const Icon(Icons.add)),
+                    const SizedBox(
+                      width: 36,
+                    ),
+                    ElevatedButton.icon(
+                        onPressed: () async {
+                          await deleteAll();
+                          setState(() {});
+                        },
+                        label: const Text('Delete all!')),
+                  ],
+                ),
                 ElevatedButton.icon(
                     icon: const Icon(Icons.home),
                     onPressed: widget.toHomeScreen,
@@ -92,7 +118,12 @@ class _ItemsScreenState extends State<ItemsScreen> {
     );
   }
 
-  Future showaddItemDialog() {
+  Future showaddItemDialog({ListItem? item}) {
+    final newItem = item == null;
+    if (item != null) {
+      itemController.text = item.itemName;
+      amountController.text = item.amount.toString();
+    }
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -102,6 +133,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
               child: Column(
                 children: <Widget>[
                   TextFormField(
+                    // initialValue: editItem ? item.itemName : '',
                     controller: itemController,
                     decoration: const InputDecoration(
                       icon: Icon(Icons.food_bank),
@@ -122,6 +154,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     },
                   ),
                   TextFormField(
+                    //  initialValue: editItem ? item.amount.toString() : '',
                     controller: amountController,
                     //   initialValue: '1',
                     decoration: const InputDecoration(),
@@ -148,28 +181,32 @@ class _ItemsScreenState extends State<ItemsScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_keyDialogForm.currentState!.validate()) {
-                    addItem(
-                        itemController.text, int.parse(amountController.text));
+                    newItem
+                        ? addItem(itemController.text,
+                            int.parse(amountController.text))
+                        : editItem(item.id, itemController.text,
+                            int.parse(amountController.text));
                     itemController.clear();
                     amountController.clear();
                     setState(() {});
                     Navigator.pop(context);
                   }
                 },
-                child: Text('Save'),
                 style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(33, 150, 243, 1)),
+                child: const Text('Save'),
               ),
               ElevatedButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text('Cancel')),
+                  child: const Text('Cancel')),
             ],
           );
         });
   }
 
+  @override
   void dispose() {
     itemController.dispose();
     amountController.dispose();
