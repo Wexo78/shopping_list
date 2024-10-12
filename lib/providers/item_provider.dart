@@ -18,7 +18,7 @@ Future<void> deleteItem(String id) async {
   await db.collection('listItems').doc(id).delete();
 }
 
-Future<void> addItem(String itemName, int amount) async {
+Future<void> addItem(String itemName, String amount) async {
   final ItemData =
       ListItem(id: '', itemName: itemName, amount: amount, acquired: false)
           .toFirestore();

@@ -40,6 +40,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   child: ListView(
                     children: content.map((item) {
                       return ListTile(
+                          key: ValueKey(item.id),
                           leading: Text(
                             item.amount.toString(),
                             style: TextStyle(
@@ -60,8 +61,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                   },
                                   icon: const Icon(Icons.edit)),
                               IconButton(
-                                  onPressed: () {
-                                    deleteItem(item.id);
+                                  onPressed: () async {
+                                    await deleteItem(item.id);
                                     setState(() {});
                                   },
                                   icon: const Icon(Icons.delete_rounded)),
@@ -138,7 +139,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     decoration: const InputDecoration(
                       icon: Icon(Icons.food_bank),
                     ),
-                    maxLength: 20,
+                    maxLength: 50,
                     textAlign: TextAlign.center,
                     //      onSaved: (val) {
                     //        titleController.text = val;
@@ -158,7 +159,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     controller: amountController,
                     //   initialValue: '1',
                     decoration: const InputDecoration(),
-                    maxLength: 5,
+                    maxLength: 20,
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     //      onSaved: (val) {
@@ -167,9 +168,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     //      },
                     autovalidateMode: AutovalidateMode.always,
                     validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'You must give at least 1 number';
-                      }
+                      //       if (value!.isEmpty) {
+                      //         return 'You must give at least 1 number';
+                      //       }
 
                       return null;
                     },
@@ -182,8 +183,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 onPressed: () {
                   if (_keyDialogForm.currentState!.validate()) {
                     newItem
-                        ? addItem(itemController.text,
-                            int.parse(amountController.text))
+                        ? addItem(itemController.text, amountController.text)
                         : editItem(item.id, itemController.text,
                             int.parse(amountController.text));
                     itemController.clear();
