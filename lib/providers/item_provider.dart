@@ -26,7 +26,7 @@ Future<void> addItem(String itemName, String amount) async {
   await db.collection('listItems').add(ItemData);
 }
 
-Future<void> editItem(String id, String itemName, int amount) async {
+Future<void> editItem(String id, String itemName, String amount) async {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final data = {
     'itemName': itemName,

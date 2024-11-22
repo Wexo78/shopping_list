@@ -14,7 +14,7 @@ class ListItem {
     return ListItem(
         id: id,
         itemName: data['itemName']!,
-        amount: data['amount'],
+        amount: data['amount'].toString(),
         acquired: data['acquired'] ?? false);
   }
 

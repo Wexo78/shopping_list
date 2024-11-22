@@ -25,93 +25,97 @@ class _ItemsScreenState extends State<ItemsScreen> {
       future: _listItems,
       builder: (BuildContext context, AsyncSnapshot<List<ListItem>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Waiting for data.");
+          return const Center(child: Text("Waiting for data."));
         } else if (snapshot.hasError) {
-          return Text("Error: ${snapshot.error}");
+          return Center(child: Text("Error: ${snapshot.error}"));
         } else if (!snapshot.hasData) {
-          return Text("No data yet.");
+          return const Center(child: Text("No data yet."));
         } else {
           final content = snapshot.data!;
-          return Center(
-            child: Column(
-              children: [
-                //      Center(child: const Text('Item List')),
-                Expanded(
-                  child: ListView(
-                    children: content.map((item) {
-                      return ListTile(
-                          key: ValueKey(item.id),
-                          leading: Text(
-                            item.amount.toString(),
-                            style: TextStyle(
-                              fontSize: 15,
-                              decoration: item.acquired
-                                  ? TextDecoration.lineThrough
-                                  : TextDecoration.none,
-                            ),
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              IconButton(
-                                  onPressed: () {
-                                    //  deleteItem(item.id);
-                                    showaddItemDialog(item: item);
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.edit)),
-                              IconButton(
-                                  onPressed: () async {
-                                    await deleteItem(item.id);
-                                    setState(() {});
-                                  },
-                                  icon: const Icon(Icons.delete_rounded)),
-                            ],
-                          ),
-                          title: GestureDetector(
-                            onTap: () async {
-                              //  print('****Tultiin Gestureen, item: $item');
-                              await toggleAcquiredProvider(item);
-                              //   print('****** mentiin togglen ohi *****');
-                              setState(() {
-                                //     print('**** Tultiin stateen ******');
-                              });
-                            },
-                            child: Text(
-                              item.itemName,
+          return Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Center(
+              child: Column(
+                children: [
+                  //      Center(child: const Text('Item List')),
+                  Expanded(
+                    child: ListView(
+                      children: content.map((item) {
+                        return ListTile(
+                            key: ValueKey(item.id),
+                            leading: Text(
+                              item.amount.toString(),
                               style: TextStyle(
+                                fontSize: 15,
                                 decoration: item.acquired
                                     ? TextDecoration.lineThrough
                                     : TextDecoration.none,
                               ),
                             ),
-                          ));
-                    }).toList(),
-                  ),
-                ),
-                //...content.map((item) => Text(item.itemName)),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton.filled(
-                        onPressed: () => showaddItemDialog(),
-                        icon: const Icon(Icons.add)),
-                    const SizedBox(
-                      width: 36,
+                            trailing: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                IconButton(
+                                    onPressed: () {
+                                      //  deleteItem(item.id);
+                                      showaddItemDialog(item: item);
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.edit)),
+                                IconButton(
+                                    onPressed: () async {
+                                      await deleteItem(item.id);
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.delete_rounded)),
+                              ],
+                            ),
+                            title: GestureDetector(
+                              onTap: () async {
+                                //  print('****Tultiin Gestureen, item: $item');
+                                await toggleAcquiredProvider(item);
+                                //   print('****** mentiin togglen ohi *****');
+                                setState(() {
+                                  //     print('**** Tultiin stateen ******');
+                                });
+                              },
+                              child: Text(
+                                item.itemName,
+                                style: TextStyle(
+                                  decoration: item.acquired
+                                      ? TextDecoration.lineThrough
+                                      : TextDecoration.none,
+                                ),
+                              ),
+                            ));
+                      }).toList(),
                     ),
-                    ElevatedButton.icon(
-                        onPressed: () async {
-                          await deleteAll();
-                          setState(() {});
-                        },
-                        label: const Text('Delete all!')),
-                  ],
-                ),
-                ElevatedButton.icon(
-                    icon: const Icon(Icons.home),
-                    onPressed: widget.toHomeScreen,
-                    label: const Text('Back to home'))
-              ],
+                  ),
+                  //...content.map((item) => Text(item.itemName)),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton.filled(
+                          onPressed: () => showaddItemDialog(),
+                          icon: const Icon(Icons.add)),
+                      const SizedBox(
+                        width: 36,
+                      ),
+                      ElevatedButton.icon(
+                          onPressed: () async {
+                            await deleteAll();
+                            setState(() {});
+                          },
+                          label: const Text('Delete all!')),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton.icon(
+                      icon: const Icon(Icons.home),
+                      onPressed: widget.toHomeScreen,
+                      label: const Text('Back to home'))
+                ],
+              ),
             ),
           );
         }
@@ -160,7 +164,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     //   initialValue: '1',
                     decoration: const InputDecoration(),
                     maxLength: 20,
-                    keyboardType: TextInputType.number,
+                    // keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     //      onSaved: (val) {
                     //        titleController.text = val;
@@ -185,7 +189,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     newItem
                         ? addItem(itemController.text, amountController.text)
                         : editItem(item.id, itemController.text,
-                            int.parse(amountController.text));
+                            amountController.text);
                     itemController.clear();
                     amountController.clear();
                     setState(() {});

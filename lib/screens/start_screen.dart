@@ -27,7 +27,7 @@ class StartScreen extends StatelessWidget {
           const SizedBox(height: 30),
           Image.asset(
             'assets/images/start_image.png',
-            height: 500,
+            height: 400,
           ),
           const SizedBox(
             height: 50,
