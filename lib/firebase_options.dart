@@ -46,25 +46,25 @@ class DefaultFirebaseOptions {
     messagingSenderId: '549248437301',
     projectId: 'shopping-list-10a41',
     authDomain: 'shopping-list-10a41.firebaseapp.com',
-    storageBucket: 'shopping-list-10a41.appspot.com',
+    storageBucket: 'shopping-list-10a41.firebasestorage.app',
     measurementId: 'G-7075PNYVQ2',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCkt4gBmZz9OoMfcYmU2AsbuEFztMU_MWQ',
-    appId: '1:549248437301:android:1415e11a009afb7c9d357c',
+    appId: '1:549248437301:android:97dce6d6f2e5af889d357c',
     messagingSenderId: '549248437301',
     projectId: 'shopping-list-10a41',
-    storageBucket: 'shopping-list-10a41.appspot.com',
+    storageBucket: 'shopping-list-10a41.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDxmXnmNtsa7PmZfuUDp11CBJU84CFy2l4',
-    appId: '1:549248437301:ios:fb6793d7e2a43d389d357c',
+    appId: '1:549248437301:ios:9d5f90216fb29e0e9d357c',
     messagingSenderId: '549248437301',
     projectId: 'shopping-list-10a41',
-    storageBucket: 'shopping-list-10a41.appspot.com',
-    iosBundleId: 'com.example.shoppingList',
+    storageBucket: 'shopping-list-10a41.firebasestorage.app',
+    iosBundleId: 'com.wexo78.shoppingList',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -72,7 +72,7 @@ class DefaultFirebaseOptions {
     appId: '1:549248437301:ios:fb6793d7e2a43d389d357c',
     messagingSenderId: '549248437301',
     projectId: 'shopping-list-10a41',
-    storageBucket: 'shopping-list-10a41.appspot.com',
+    storageBucket: 'shopping-list-10a41.firebasestorage.app',
     iosBundleId: 'com.example.shoppingList',
   );
 
@@ -82,7 +82,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '549248437301',
     projectId: 'shopping-list-10a41',
     authDomain: 'shopping-list-10a41.firebaseapp.com',
-    storageBucket: 'shopping-list-10a41.appspot.com',
+    storageBucket: 'shopping-list-10a41.firebasestorage.app',
     measurementId: 'G-BGGZYLBZ9M',
   );
 

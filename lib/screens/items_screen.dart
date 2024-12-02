@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:shopping_list/models/list_item.dart';
 import 'package:shopping_list/providers/item_provider.dart';
+import 'package:shopping_list/utils/categorize_items.dart';
 
 class ItemsScreen extends StatefulWidget {
   const ItemsScreen({required this.toHomeScreen, super.key});
@@ -21,6 +23,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
   Widget build(BuildContext context) {
     final Future<List<ListItem>> _listItems = fetchItems();
 
+    List<String> testItems = ['omena', 'maito', 'porkkana', 'juusto'];
+
     return FutureBuilder<List<ListItem>>(
       future: _listItems,
       builder: (BuildContext context, AsyncSnapshot<List<ListItem>> snapshot) {
@@ -32,6 +36,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
           return const Center(child: Text("No data yet."));
         } else {
           final content = snapshot.data!;
+          final Map<String, List<ListItem>> groupedContent =
+              groupItems(content);
+
           return Padding(
             padding: const EdgeInsets.all(8.0),
             child: Center(
@@ -40,54 +47,75 @@ class _ItemsScreenState extends State<ItemsScreen> {
                   //      Center(child: const Text('Item List')),
                   Expanded(
                     child: ListView(
-                      children: content.map((item) {
-                        return ListTile(
-                            key: ValueKey(item.id),
-                            leading: Text(
-                              item.amount.toString(),
-                              style: TextStyle(
-                                fontSize: 15,
-                                decoration: item.acquired
-                                    ? TextDecoration.lineThrough
-                                    : TextDecoration.none,
-                              ),
-                            ),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                IconButton(
-                                    onPressed: () {
-                                      //  deleteItem(item.id);
-                                      showaddItemDialog(item: item);
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.edit)),
-                                IconButton(
-                                    onPressed: () async {
-                                      await deleteItem(item.id);
-                                      setState(() {});
-                                    },
-                                    icon: const Icon(Icons.delete_rounded)),
-                              ],
-                            ),
-                            title: GestureDetector(
-                              onTap: () async {
-                                //  print('****Tultiin Gestureen, item: $item');
-                                await toggleAcquiredProvider(item);
-                                //   print('****** mentiin togglen ohi *****');
-                                setState(() {
-                                  //     print('**** Tultiin stateen ******');
-                                });
-                              },
-                              child: Text(
-                                item.itemName,
+                      padding: EdgeInsets.zero,
+                      children: groupedContent.entries.expand((entry) {
+                        final category = entry.key;
+                        final items = entry.value;
+
+                        return [
+                          // Add category header
+                          Text(
+                            category,
+                            style: TextStyle(
+                                color: Colors.purple,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium
+                                    ?.fontSize),
+                          ),
+                          // Add items under the category
+                          ...items.map(
+                            (item) => ListTile(
+                              dense: true,
+                              minVerticalPadding: 0,
+                              visualDensity: VisualDensity.compact,
+                              contentPadding: EdgeInsets.zero,
+                              key: ValueKey(item.id),
+                              leading: Text(
+                                item.amount.toString(),
                                 style: TextStyle(
+                                  fontSize: 12,
                                   decoration: item.acquired
                                       ? TextDecoration.lineThrough
                                       : TextDecoration.none,
                                 ),
                               ),
-                            ));
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                      onPressed: () {
+                                        //  deleteItem(item.id);
+                                        showaddItemDialog(item: item);
+                                        setState(() {});
+                                      },
+                                      icon: const Icon(Icons.edit)),
+                                  IconButton(
+                                      onPressed: () async {
+                                        await deleteItem(item.id);
+                                        setState(() {});
+                                      },
+                                      icon: Icon(Icons.delete_rounded)),
+                                ],
+                              ),
+                              title: GestureDetector(
+                                onTap: () async {
+                                  await toggleAcquiredProvider(item);
+
+                                  setState(() {});
+                                },
+                                child: Text(
+                                  item.itemName,
+                                  style: TextStyle(
+                                    decoration: item.acquired
+                                        ? TextDecoration.lineThrough
+                                        : TextDecoration.none,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ];
                       }).toList(),
                     ),
                   ),
@@ -107,13 +135,34 @@ class _ItemsScreenState extends State<ItemsScreen> {
                             setState(() {});
                           },
                           label: const Text('Delete all!')),
+                      const SizedBox(
+                        width: 36,
+                      ),
+                      ElevatedButton(
+                          onPressed: () async {
+                            final testResult = await categorizeItems(content);
+                            print('******** testResult *******');
+                            print(testResult);
+                            final categorizedItems =
+                                await parseAndGroupItems(content, testResult);
+
+                            print(categorizedItems[0]);
+                            setState(() {});
+                          },
+                          child: const Text('Reorder'))
                     ],
                   ),
                   const SizedBox(height: 8),
                   ElevatedButton.icon(
-                      icon: const Icon(Icons.home),
-                      onPressed: widget.toHomeScreen,
-                      label: const Text('Back to home'))
+                      icon: const Icon(Icons.exit_to_app),
+                      onPressed: () async {
+                        await FirebaseAuth.instance.signOut();
+                        widget.toHomeScreen();
+                      },
+                      label: const Text('Logout')),
+                  const SizedBox(
+                    height: 16,
+                  ),
                 ],
               ),
             ),
@@ -189,7 +238,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     newItem
                         ? addItem(itemController.text, amountController.text)
                         : editItem(item.id, itemController.text,
-                            amountController.text);
+                            amountController.text, item.category);
                     itemController.clear();
                     amountController.clear();
                     setState(() {});
