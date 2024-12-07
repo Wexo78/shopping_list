@@ -138,6 +138,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       const SizedBox(
                         width: 36,
                       ),
+                      /*
                       ElevatedButton(
                           onPressed: () async {
                             final testResult = await categorizeItems(content);
@@ -150,6 +151,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                             setState(() {});
                           },
                           child: const Text('Reorder'))
+                          */
                     ],
                   ),
                   const SizedBox(height: 8),
