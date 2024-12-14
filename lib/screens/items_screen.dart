@@ -35,7 +35,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     if (!mounted) return;
                     Navigator.of(context).pop();
                   },
-                  child: const Text('Delete.')),
+                  child: const Text('Delete')),
               TextButton(
                   onPressed: () {
                     Navigator.of(context).pop();
