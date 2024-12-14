@@ -77,7 +77,7 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
           {
             'role': 'user',
             'content':
-                """Categorize in Finnish the following items: $itemList and return them in the format:
+                """Categorize in english the following items: $itemList and return them in the format:
 {
   "Fruit": ["Apple"],
   "Dairy Products": ["Milk", "Cheese"],

@@ -95,146 +95,158 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-              margin: const EdgeInsets.only(top: 0, left: 20, right: 20),
-              width: 300,
-              child: Image.asset(
-                'assets/images/start_image.png',
-                fit: BoxFit.contain,
-                height: 300,
-              ),
-            ),
-            GestureDetector(
-              onTap: showAboutMessage,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      showAboutMessage();
-                    },
-                    icon: Icon(Icons.info),
+    return Scaffold(
+      appBar: AppBar(
+          title: const Center(
+              child: Text(
+        'Was there everything?',
+      ))),
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Container(
+                  margin: const EdgeInsets.only(top: 0, left: 20, right: 20),
+                  width: 300,
+                  child: Image.asset(
+                    'assets/images/start_image.png',
+                    fit: BoxFit.contain,
+                    height: 300,
                   ),
-                  Text('About this app...'),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Card(
-                margin: const EdgeInsets.all(20),
-                child: SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(16),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          TextFormField(
-                            decoration:
-                                InputDecoration(label: Text('Email address')),
-                            keyboardType: TextInputType.emailAddress,
-                            autocorrect: false,
-                            textCapitalization: TextCapitalization.none,
-                            validator: (value) {
-                              if (value == null ||
-                                  value.trim().isEmpty ||
-                                  !value.contains('@')) {
-                                return 'Please enter a valid email address';
-                              }
-                              return null;
-                            },
-                            onSaved: (newValue) {
-                              _enteredEmail = newValue!;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 16,
-                          ),
-                          TextFormField(
-                            decoration:
-                                const InputDecoration(labelText: 'Password'),
-                            keyboardType: TextInputType.visiblePassword,
-                            autocorrect: false,
-                            obscureText: true,
-                            textCapitalization: TextCapitalization.none,
-                            validator: (value) {
-                              if (value == null || value.trim().length < 6) {
-                                return 'Password must be at least 6 characters long';
-                              }
-                              return null;
-                            },
-                            onSaved: (newValue) {
-                              _enteredPassword = newValue!;
-                            },
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          if (_isAuthenticating)
-                            const CircularProgressIndicator(),
-                          if (!_isAuthenticating)
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .primaryContainer),
-                                    onPressed: _submit,
-                                    child: Text(_islogin ? 'Login' : 'Signup')),
-                                if (_islogin)
-                                  TextButton(
-                                      onPressed: () async {
-                                        _formKey.currentState!.save();
-                                        if (_enteredEmail.isEmpty) {
-                                          if (!mounted) return;
-                                          ScaffoldMessenger.of(context)
-                                              .clearSnackBars();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
-                                                  content: Text(
-                                                      'Enter email address')));
-                                          return;
-                                        }
-                                        await FirebaseAuth.instance
-                                            .sendPasswordResetEmail(
-                                                email: _enteredEmail);
-
-                                        ScaffoldMessenger.of(context)
-                                            .clearSnackBars();
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    'Check your email box')));
-                                      },
-                                      child: Text('Forgot my password')),
-                              ],
-                            ),
-                          if (_isAuthenticating)
-                            const CircularProgressIndicator(),
-                          const SizedBox(height: 8),
-                          const SizedBox(height: 8),
-                          TextButton(
-                              onPressed: () {
-                                setState(() {
-                                  _islogin = !_islogin;
-                                });
-                              },
-                              child: Text(_islogin
-                                  ? 'Create an account'
-                                  : 'I already have an account'))
-                        ],
+                ),
+                GestureDetector(
+                  onTap: showAboutMessage,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          showAboutMessage();
+                        },
+                        icon: Icon(Icons.info),
                       ),
-                    ),
+                      Text('About this app...'),
+                    ],
                   ),
-                ))
-          ],
+                ),
+                SizedBox(height: 16),
+                Card(
+                    margin: const EdgeInsets.all(20),
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Form(
+                          key: _formKey,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextFormField(
+                                decoration: InputDecoration(
+                                    label: Text('Email address')),
+                                keyboardType: TextInputType.emailAddress,
+                                autocorrect: false,
+                                textCapitalization: TextCapitalization.none,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().isEmpty ||
+                                      !value.contains('@')) {
+                                    return 'Please enter a valid email address';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (newValue) {
+                                  _enteredEmail = newValue!;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 16,
+                              ),
+                              TextFormField(
+                                decoration: const InputDecoration(
+                                    labelText: 'Password'),
+                                keyboardType: TextInputType.visiblePassword,
+                                autocorrect: false,
+                                obscureText: true,
+                                textCapitalization: TextCapitalization.none,
+                                validator: (value) {
+                                  if (value == null ||
+                                      value.trim().length < 6) {
+                                    return 'Password must be at least 6 characters long';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (newValue) {
+                                  _enteredPassword = newValue!;
+                                },
+                              ),
+                              const SizedBox(
+                                height: 12,
+                              ),
+                              if (_isAuthenticating)
+                                const CircularProgressIndicator(),
+                              if (!_isAuthenticating)
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: [
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Theme.of(context)
+                                                .colorScheme
+                                                .primaryContainer),
+                                        onPressed: _submit,
+                                        child: Text(
+                                            _islogin ? 'Login' : 'Signup')),
+                                    if (_islogin)
+                                      TextButton(
+                                          onPressed: () async {
+                                            _formKey.currentState!.save();
+                                            if (_enteredEmail.isEmpty) {
+                                              if (!mounted) return;
+                                              ScaffoldMessenger.of(context)
+                                                  .clearSnackBars();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Enter email address')));
+                                              return;
+                                            }
+                                            await FirebaseAuth.instance
+                                                .sendPasswordResetEmail(
+                                                    email: _enteredEmail);
+
+                                            ScaffoldMessenger.of(context)
+                                                .clearSnackBars();
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                                    content: Text(
+                                                        'Check your email box')));
+                                          },
+                                          child: Text('Forgot my password')),
+                                  ],
+                                ),
+                              if (_isAuthenticating)
+                                const CircularProgressIndicator(),
+                              const SizedBox(height: 8),
+                              const SizedBox(height: 8),
+                              TextButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      _islogin = !_islogin;
+                                    });
+                                  },
+                                  child: Text(_islogin
+                                      ? 'Create an account'
+                                      : 'I already have an account'))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ))
+              ],
+            ),
+          ),
         ),
       ),
     );

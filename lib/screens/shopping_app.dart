@@ -28,6 +28,8 @@ class _ShoppingAppState extends State<ShoppingApp> {
     });
   }
 
+  void addItem() {}
+
   @override
   Widget build(BuildContext context) {
     //  Widget screenWidget = StartScreen(toListScreen: itemsScreen);
@@ -52,19 +54,25 @@ class _ShoppingAppState extends State<ShoppingApp> {
     }
 
     return MaterialApp(
-      theme: ThemeData(
-        listTileTheme: ListTileThemeData(
-          dense: true, // Applies dense styling to all ListTiles
-          contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+        theme: ThemeData(
+          listTileTheme: ListTileThemeData(
+            dense: true, // Applies dense styling to all ListTiles
+            contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+          ),
         ),
-      ),
-      home: Scaffold(
+        home: screenWidget
+
+        /*
+      Scaffold(
           appBar: AppBar(
               title: const Center(
                   child: Text(
             'Was there everything?',
           ))),
-          body: SafeArea(child: screenWidget)),
-    );
+          body: SafeArea(child: screenWidget),
+          
+          ),
+*/
+        );
   }
 }
