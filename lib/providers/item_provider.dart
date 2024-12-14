@@ -1,12 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopping_list/models/list_item.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<List<ListItem>> fetchItems() async {
+  final uid = FirebaseAuth.instance.currentUser!.uid;
   final FirebaseFirestore db = FirebaseFirestore.instance;
 
+  print('uid: $uid');
+
   List<ListItem> itemList = [];
-  final docRef = await db.collection('listItems').get();
+  final docRef =
+      await db.collection('listItems').where('userId', isEqualTo: uid).get();
   docRef.docs.forEach(
       (doc) => itemList.add(ListItem.fromFireStore(doc.id, doc.data())));
 
@@ -19,18 +24,25 @@ Future<void> deleteItem(String id) async {
 }
 
 Future<void> addItem(String itemName, String amount) async {
-  final ItemData =
-      ListItem(id: '', itemName: itemName, amount: amount, acquired: false)
-          .toFirestore();
+  final uid = FirebaseAuth.instance.currentUser!.uid;
+  final ItemData = ListItem(
+          id: '',
+          itemName: itemName,
+          amount: amount,
+          acquired: false,
+          userId: uid)
+      .toFirestore();
   final FirebaseFirestore db = FirebaseFirestore.instance;
   await db.collection('listItems').add(ItemData);
 }
 
-Future<void> editItem(String id, String itemName, String amount) async {
+Future<void> editItem(
+    String id, String itemName, String amount, String category) async {
   final FirebaseFirestore db = FirebaseFirestore.instance;
   final data = {
     'itemName': itemName,
     'amount': amount,
+    'category': category,
   };
   await db.collection('listItems').doc(id).set(data, SetOptions(merge: true));
 }
