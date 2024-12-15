@@ -1,21 +1,22 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_list/models/list_item.dart';
-import 'package:shopping_list/providers/item_provider.dart';
+import 'package:shopping_list/notifiers/item_notifier.dart';
 import 'package:shopping_list/utils/categorize_items.dart';
 
-class ItemsScreen extends StatefulWidget {
+class ItemsScreen extends ConsumerStatefulWidget {
   const ItemsScreen({required this.toHomeScreen, super.key});
 
   final void Function() toHomeScreen;
 
   @override
-  State<ItemsScreen> createState() {
+  ConsumerState<ItemsScreen> createState() {
     return _ItemsScreenState();
   }
 }
 
-class _ItemsScreenState extends State<ItemsScreen> {
+class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   final TextEditingController itemController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final GlobalKey<FormState> _keyDialogForm = GlobalKey<FormState>();
@@ -31,7 +32,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
             actions: <Widget>[
               TextButton(
                   onPressed: () async {
-                    await deleteAll();
+                    // await deleteAll();
+                    ref.read(itemProvider.notifier).deleteAll();
                     if (!mounted) return;
                     Navigator.of(context).pop();
                   },
@@ -48,7 +50,9 @@ class _ItemsScreenState extends State<ItemsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final Future<List<ListItem>> _listItems = fetchItems();
+    //final Future<List<ListItem>> _listItems = fetchItems();
+    final List<ListItem> listItems = ref.watch(itemProvider);
+    final Map<String, List<ListItem>> groupedContent = groupItems(listItems);
 
     return Scaffold(
         appBar: AppBar(
@@ -61,22 +65,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
           child: const Icon(Icons.add),
         ),
         body: SafeArea(
-          child: FutureBuilder<List<ListItem>>(
-            future: _listItems,
-            builder:
-                (BuildContext context, AsyncSnapshot<List<ListItem>> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: Text("Waiting for data."));
-              } else if (snapshot.hasError) {
-                return Center(child: Text("Error: ${snapshot.error}"));
-              } else if (!snapshot.hasData) {
-                return const Center(child: Text("No data yet."));
-              } else {
-                final content = snapshot.data!;
-                final Map<String, List<ListItem>> groupedContent =
-                    groupItems(content);
-
-                return Padding(
+          child: listItems.isEmpty
+              ? Center(
+                  child: Text('No items in list'),
+                )
+              : Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
                   child: Center(
                     child: Column(
@@ -129,17 +122,21 @@ class _ItemsScreenState extends State<ItemsScreen> {
                                             icon: const Icon(Icons.edit)),
                                         IconButton(
                                             onPressed: () async {
-                                              await deleteItem(item.id);
-                                              setState(() {});
+                                              //await deleteItem(item.id);
+                                              await ref
+                                                  .read(itemProvider.notifier)
+                                                  .deleteItem(item.id);
                                             },
                                             icon: Icon(Icons.delete_rounded)),
                                       ],
                                     ),
                                     title: GestureDetector(
                                       onTap: () async {
-                                        await toggleAcquiredProvider(item);
+                                        // await toggleAcquiredProvider(item);
 
-                                        setState(() {});
+                                        ref
+                                            .read(itemProvider.notifier)
+                                            .toggleAcquiredProvider(item);
                                       },
                                       child: Text(
                                         item.itemName,
@@ -218,10 +215,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       ],
                     ),
                   ),
-                );
-              }
-            },
-          ),
+                ),
         ),
         bottomNavigationBar: BottomAppBar(
           padding: EdgeInsets.all(0),
@@ -249,8 +243,6 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       IconButton(
                         onPressed: () async {
                           await showDeleteAllDialog();
-
-                          setState(() {});
                         },
                         icon: Icon(Icons.delete),
                       ),
@@ -268,10 +260,18 @@ class _ItemsScreenState extends State<ItemsScreen> {
                     IconButton(
                       icon: Icon(Icons.category),
                       onPressed: () async {
-                        final content = await fetchItems(); // Fetch items again
+                        // final content = await fetchItems(); // Fetch items again
+                        // final testResult = await categorizeItems(content);
+                        final content =
+                            ref.read(itemProvider); // Fetch items again
+
+                        if (content.isEmpty) {
+                          return;
+                        }
                         final testResult = await categorizeItems(content);
+
                         final categorizedItems =
-                            await parseAndGroupItems(content, testResult);
+                            await parseAndGroupItems(content, testResult, ref);
                         print(categorizedItems[0]);
                         setState(() {});
                       },
@@ -370,10 +370,22 @@ class _ItemsScreenState extends State<ItemsScreen> {
                 onPressed: () async {
                   if (_keyDialogForm.currentState!.validate()) {
                     newItem
-                        ? await addItem(
-                            itemController.text, amountController.text)
-                        : await editItem(item.id, itemController.text,
-                            amountController.text, item.category);
+                        ? ref
+                            .read(itemProvider.notifier)
+                            .addItem(itemController.text, amountController.text)
+
+                        // ? await addItem(
+                        //     itemController.text, amountController.text)
+
+                        : ref.read(itemProvider.notifier).editItem(
+                            item.id,
+                            itemController.text,
+                            amountController.text,
+                            item.category);
+
+                    // await editItem(item.id, itemController.text,
+                    //     amountController.text, item.category);
+
                     itemController.clear();
                     amountController.clear();
 
