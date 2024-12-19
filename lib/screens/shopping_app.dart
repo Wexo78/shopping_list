@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_list/screens/auth_screen.dart';
 import 'package:shopping_list/screens/items_screen.dart';
 import 'package:shopping_list/screens/start_screen.dart';
@@ -60,7 +61,7 @@ class _ShoppingAppState extends State<ShoppingApp> {
             contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
           ),
         ),
-        home: screenWidget
+        home: ProviderScope(child: screenWidget)
 
         /*
       Scaffold(
