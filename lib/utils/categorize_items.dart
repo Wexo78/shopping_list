@@ -1,8 +1,10 @@
 import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 import 'package:shopping_list/models/list_item.dart';
-import 'package:shopping_list/providers/item_provider.dart';
+import 'package:shopping_list/notifiers/item_notifier.dart';
 
 var apiKey = dotenv.env['OPENAI_API_KEY'];
 var baseUrl = dotenv.env['BASE_URL'];
@@ -24,8 +26,8 @@ Map<String, List<ListItem>> groupItems(List<ListItem> items) {
   return groupedItems;
 }
 
-Future<List<ListItem>> parseAndGroupItems(
-    List<ListItem> items, Map<String, List<String>> responseText) async {
+Future<List<ListItem>> parseAndGroupItems(List<ListItem> items,
+    Map<String, List<String>> responseText, WidgetRef ref) async {
   Map<String, List<String>> categorizedItems = {};
 
   for (var item in items) {
@@ -36,7 +38,10 @@ Future<List<ListItem>> parseAndGroupItems(
       if (keywords.any((keyword) =>
           item.itemName.toLowerCase().contains(keyword.toLowerCase()))) {
         print(categoryName);
-        editItem(item.id, item.itemName, item.amount!, categoryName);
+        // editItem(item.id, item.itemName, item.amount!, categoryName);
+        ref
+            .read(itemProvider.notifier)
+            .editItem(item.id, item.itemName, item.amount!, categoryName);
 
         //  item.category = categoryName;
       }

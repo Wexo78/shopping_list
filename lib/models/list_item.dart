@@ -8,11 +8,28 @@ class ListItem {
       this.acquired = false});
 
   final String id;
-  final String itemName;
+  String itemName;
   String? amount;
   bool acquired;
   final String userId;
   String category;
+
+  ListItem copyWith(
+      {String? id,
+      String? name,
+      String? amount,
+      String? userId,
+      bool? acquired,
+      String? category}) {
+    return ListItem(
+      id: id ?? this.id,
+      itemName: name ?? this.itemName,
+      amount: amount ?? this.amount,
+      userId: userId ?? this.userId,
+      acquired: acquired ?? this.acquired,
+      category: category ?? this.category,
+    );
+  }
 
   factory ListItem.fromFireStore(String id, Map<String, dynamic> data) {
     return ListItem(
