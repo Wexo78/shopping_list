@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_list/models/list_item.dart';
 import 'package:shopping_list/notifiers/item_notifier.dart';
 import 'package:shopping_list/utils/categorize_items.dart';
+import 'package:shopping_list/widgets/about_content.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
   const ItemsScreen({required this.toHomeScreen, super.key});
@@ -20,6 +21,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   final TextEditingController itemController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final GlobalKey<FormState> _keyDialogForm = GlobalKey<FormState>();
+  bool isCategorizing = false;
 
   Future<void> showDeleteAllDialog() async {
     return showDialog<void>(
@@ -48,6 +50,24 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         });
   }
 
+  Future<void> showAbout() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('About'),
+            content: const AboutContent(),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Back'))
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     //final Future<List<ListItem>> _listItems = fetchItems();
@@ -69,153 +89,99 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
               ? Center(
                   child: Text('No items in list'),
                 )
-              : Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
-                  child: Center(
-                    child: Column(
-                      children: [
-                        //      Center(child: const Text('Item List')),
-                        Expanded(
-                          child: ListView(
-                            padding: EdgeInsets.zero,
-                            children: groupedContent.entries.expand((entry) {
-                              final category = entry.key;
-                              final items = entry.value;
+              : isCategorizing
+                  ? Center(child: CircularProgressIndicator())
+                  : Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      child: Center(
+                        child: Column(
+                          children: [
+                            //      Center(child: const Text('Item List')),
+                            Expanded(
+                              child: ListView(
+                                padding: EdgeInsets.zero,
+                                children:
+                                    groupedContent.entries.expand((entry) {
+                                  final category = entry.key;
+                                  final items = entry.value;
 
-                              return [
-                                // Add category header
-                                Text(
-                                  category,
-                                  style: TextStyle(
-                                      color: Colors.purple,
-                                      fontSize: Theme.of(context)
-                                          .textTheme
-                                          .titleMedium
-                                          ?.fontSize),
-                                ),
-                                // Add items under the category
-                                ...items.map(
-                                  (item) => ListTile(
-                                    dense: true,
-                                    minVerticalPadding: 0,
-                                    visualDensity: VisualDensity.compact,
-                                    contentPadding: EdgeInsets.zero,
-                                    key: ValueKey(item.id),
-                                    leading: Text(
-                                      item.amount.toString(),
+                                  return [
+                                    // Add category header
+                                    Text(
+                                      category,
                                       style: TextStyle(
-                                        fontSize: 12,
-                                        decoration: item.acquired
-                                            ? TextDecoration.lineThrough
-                                            : TextDecoration.none,
-                                      ),
+                                          color: Colors.purple,
+                                          fontSize: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.fontSize),
                                     ),
-                                    trailing: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        IconButton(
-                                            onPressed: () {
-                                              //  deleteItem(item.id);
-                                              showaddItemDialog(item: item);
-                                              setState(() {});
-                                            },
-                                            icon: const Icon(Icons.edit)),
-                                        IconButton(
-                                            onPressed: () async {
-                                              //await deleteItem(item.id);
-                                              await ref
-                                                  .read(itemProvider.notifier)
-                                                  .deleteItem(item.id);
-                                            },
-                                            icon: Icon(Icons.delete_rounded)),
-                                      ],
-                                    ),
-                                    title: GestureDetector(
-                                      onTap: () async {
-                                        // await toggleAcquiredProvider(item);
+                                    // Add items under the category
+                                    ...items.map(
+                                      (item) => ListTile(
+                                        dense: true,
+                                        minVerticalPadding: 0,
+                                        visualDensity: VisualDensity.compact,
+                                        contentPadding: EdgeInsets.zero,
+                                        key: ValueKey(item.id),
+                                        leading: Text(
+                                          item.amount.toString(),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            decoration: item.acquired
+                                                ? TextDecoration.lineThrough
+                                                : TextDecoration.none,
+                                          ),
+                                        ),
+                                        trailing: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  //  deleteItem(item.id);
+                                                  showaddItemDialog(item: item);
+                                                  setState(() {});
+                                                },
+                                                icon: const Icon(Icons.edit)),
+                                            IconButton(
+                                                onPressed: () async {
+                                                  //await deleteItem(item.id);
+                                                  await ref
+                                                      .read(
+                                                          itemProvider.notifier)
+                                                      .deleteItem(item.id);
+                                                },
+                                                icon:
+                                                    Icon(Icons.delete_rounded)),
+                                          ],
+                                        ),
+                                        title: GestureDetector(
+                                          onTap: () async {
+                                            // await toggleAcquiredProvider(item);
 
-                                        ref
-                                            .read(itemProvider.notifier)
-                                            .toggleAcquiredProvider(item);
-                                      },
-                                      child: Text(
-                                        item.itemName,
-                                        style: TextStyle(
-                                          decoration: item.acquired
-                                              ? TextDecoration.lineThrough
-                                              : TextDecoration.none,
+                                            ref
+                                                .read(itemProvider.notifier)
+                                                .toggleAcquiredProvider(item);
+                                          },
+                                          child: Text(
+                                            item.itemName,
+                                            style: TextStyle(
+                                              decoration: item.acquired
+                                                  ? TextDecoration.lineThrough
+                                                  : TextDecoration.none,
+                                            ),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                )
-                              ];
-                            }).toList(),
-                          ),
-                        ),
-                        //...content.map((item) => Text(item.itemName)),
-                        // IconButton.filled(
-                        //     onPressed: () => showaddItemDialog(),
-                        //     icon: const Icon(Icons.add)),
-                        // const SizedBox(
-                        //   height: 16,
-                        // ),
-                        // const SizedBox(
-                        //   width: 36,
-                        // ),
-                        /*
-                        Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                ElevatedButton.icon(
-                                    onPressed: () async {
-                                      await deleteAll();
-                                      setState(() {});
-                                    },
-                                    label: const Text('Delete all!')),
-                                //  const SizedBox(
-                                //    width: 16,
-                                //  ),
-                                ElevatedButton(
-                                    onPressed: () async {
-                                      final testResult =
-                                          await categorizeItems(content);
-                                      print('******** testResult *******');
-                                      print(testResult);
-                                      final categorizedItems =
-                                          await parseAndGroupItems(
-                                              content, testResult);
-
-                                      print(categorizedItems[0]);
-                                      setState(() {});
-                                    },
-                                    child: const Text('Reorder')),
-                                //     const SizedBox(height: 16),
-                                IconButton.filled(
-                                  icon: const Icon(Icons.exit_to_app),
-                                  onPressed: () async {
-                                    await FirebaseAuth.instance.signOut();
-                                    widget.toHomeScreen();
-                                  },
-                                  //  label: const Text('Logout')
-                                ),
-                              ],
+                                    )
+                                  ];
+                                }).toList(),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-
-                        const SizedBox(
-                          height: 16,
-                        ),
-                        */
-                      ],
+                      ),
                     ),
-                  ),
-                ),
         ),
         bottomNavigationBar: BottomAppBar(
           padding: EdgeInsets.all(0),
@@ -224,17 +190,6 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                // OutlinedButton.icon(
-                //   onPressed: () async {
-                //     await deleteAll();
-                //     setState(() {});
-                //   },
-                //   label: Text(
-                //     'Delete all!',
-                //     //   style: Theme.of(context).textTheme.bodySmall,
-                //   ),
-                // ),
-
                 Padding(
                   padding: const EdgeInsets.all(1.0),
                   child: Column(
@@ -253,27 +208,35 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     ],
                   ),
                 ),
-
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       icon: Icon(Icons.category),
                       onPressed: () async {
-                        // final content = await fetchItems(); // Fetch items again
-                        // final testResult = await categorizeItems(content);
-                        final content =
-                            ref.read(itemProvider); // Fetch items again
+                        setState(() {
+                          isCategorizing = true;
+                        });
 
-                        if (content.isEmpty) {
-                          return;
+                        try {
+                          final content =
+                              ref.read(itemProvider); // Fetch items again
+
+                          if (content.isEmpty) {
+                            return;
+                          }
+                          final testResult = await categorizeItems(content);
+
+                          await parseAndGroupItems(content, testResult, ref);
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())));
                         }
-                        final testResult = await categorizeItems(content);
 
-                        final categorizedItems =
-                            await parseAndGroupItems(content, testResult, ref);
-                        print(categorizedItems[0]);
-                        setState(() {});
+                        setState(() {
+                          isCategorizing = false;
+                        });
                       },
                     ),
                     Text(
@@ -282,7 +245,19 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     ),
                   ],
                 ),
-
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.info),
+                      onPressed: showAbout,
+                    ),
+                    Text(
+                      'About',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ],
+                ),
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
