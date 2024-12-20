@@ -121,8 +121,11 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
         throw Exception('No choices in the response');
       }
     } else {
+      final error = jsonDecode(response.body)['error'];
+      print(
+          'Error: ${error['message']}. Status code: ${response.statusCode}, ');
       throw Exception(
-          'Failed to categorize. Status code: ${response.statusCode}');
+          'Error: ${error['message']}. Status code: ${response.statusCode}, ');
     }
   } catch (e) {
     // Log the error for debugging
