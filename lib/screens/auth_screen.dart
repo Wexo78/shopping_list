@@ -97,6 +97,154 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        title: const Text("Shopping List App"),
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // App Illustration
+              Container(
+                width: 200,
+                height: 200,
+                child: Image.asset(
+                  'assets/images/start_image.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+
+              // App Description Button
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  onPressed: showAboutMessage,
+                  icon: const Icon(Icons.info_outline),
+                  tooltip: 'About this app',
+                ),
+              ),
+
+              // Form Card
+              Card(
+                elevation: 4,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Email Field
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            hintText: 'Enter your email',
+                            prefixIcon: Icon(Icons.email),
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null ||
+                                value.trim().isEmpty ||
+                                !value.contains('@')) {
+                              return 'Please enter a valid email.';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _enteredEmail = value!,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Password Field
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Password',
+                            hintText: 'Enter your password',
+                            prefixIcon: Icon(Icons.lock),
+                          ),
+                          obscureText: true,
+                          validator: (value) {
+                            if (value == null || value.trim().length < 6) {
+                              return 'Password must be at least 6 characters.';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) => _enteredPassword = value!,
+                        ),
+                        const SizedBox(height: 8),
+
+                        // Forgot Password Button
+                        if (_islogin)
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () async {
+                                _formKey.currentState!.save();
+                                if (_enteredEmail.isEmpty) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Enter your email first.'),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                await FirebaseAuth.instance
+                                    .sendPasswordResetEmail(
+                                        email: _enteredEmail);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'Password reset link sent. Check your email.'),
+                                  ),
+                                );
+                              },
+                              child: const Text('Forgot Password?'),
+                            ),
+                          ),
+                        const SizedBox(height: 16),
+
+                        // Auth Buttons
+                        if (_isAuthenticating)
+                          const CircularProgressIndicator()
+                        else
+                          Column(
+                            children: [
+                              ElevatedButton(
+                                onPressed: _submit,
+                                child: Text(_islogin ? 'Login' : 'Signup'),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _islogin = !_islogin;
+                                  });
+                                },
+                                child: Text(_islogin
+                                    ? 'Create Account'
+                                    : 'Login Instead'),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+/*
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      appBar: AppBar(
           title: const Center(
               child: Text(
         'Was there everything?',
@@ -251,4 +399,5 @@ class _AuthScreenState extends State<AuthScreen> {
       ),
     );
   }
+  */
 }

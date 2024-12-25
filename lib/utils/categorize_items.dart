@@ -90,7 +90,7 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
 }"""
           }
         ],
-        'max_tokens': 100,
+        'max_tokens': 1000,
       }),
     );
 

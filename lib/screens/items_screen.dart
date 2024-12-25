@@ -81,6 +81,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
           'Was there everything?',
         ))),
         floatingActionButton: FloatingActionButton(
+          tooltip: 'Add item',
           onPressed: () => showaddItemDialog(),
           child: const Icon(Icons.add),
         ),

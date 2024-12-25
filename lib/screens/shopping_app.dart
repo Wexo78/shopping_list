@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shopping_list/preferences/app_preferences.dart';
 import 'package:shopping_list/screens/auth_screen.dart';
 import 'package:shopping_list/screens/items_screen.dart';
 import 'package:shopping_list/screens/start_screen.dart';
@@ -15,7 +16,16 @@ class ShoppingApp extends StatefulWidget {
 }
 
 class _ShoppingAppState extends State<ShoppingApp> {
-  var activeScreen = 'auth_screen';
+  late bool showWelcomeScreen;
+  late String activeScreen;
+  bool showedWelcome = false;
+
+  @override
+  void initState() {
+    showWelcomeScreen = AppPreferences.instance.showWelcomeDialog;
+    activeScreen = showWelcomeScreen ? 'welcome_screen' : 'auth_screen';
+    super.initState();
+  }
 
   void itemsScreen() {
     setState(() {
@@ -29,18 +39,25 @@ class _ShoppingAppState extends State<ShoppingApp> {
     });
   }
 
-  void addItem() {}
+  void updateShowedWelcome(bool value) {
+    setState(() {
+      showedWelcome = value;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     //  Widget screenWidget = StartScreen(toListScreen: itemsScreen);
 
-    Widget screenWidget = AuthScreen(toItemsScreen: itemsScreen);
-
+    Widget screenWidget = showWelcomeScreen
+        ? StartScreen(
+            updateShowedWelcome: updateShowedWelcome, toListScreen: authScreen)
+        : AuthScreen(toItemsScreen: itemsScreen);
     final currentUser = FirebaseAuth.instance.currentUser;
-    print('currentUser: $currentUser');
 
-    if (currentUser != null) {
+    if (currentUser != null && showWelcomeScreen == false) {
+      itemsScreen();
+    } else if (currentUser != null && showedWelcome == true) {
       itemsScreen();
     }
 
@@ -61,19 +78,6 @@ class _ShoppingAppState extends State<ShoppingApp> {
             contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
           ),
         ),
-        home: ProviderScope(child: screenWidget)
-
-        /*
-      Scaffold(
-          appBar: AppBar(
-              title: const Center(
-                  child: Text(
-            'Was there everything?',
-          ))),
-          body: SafeArea(child: screenWidget),
-          
-          ),
-*/
-        );
+        home: ProviderScope(child: screenWidget));
   }
 }
