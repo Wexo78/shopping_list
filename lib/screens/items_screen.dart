@@ -82,7 +82,9 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         ))),
         floatingActionButton: FloatingActionButton(
           tooltip: 'Add item',
-          onPressed: () => showaddItemDialog(),
+          onPressed: () {
+            showaddItemDialog(listItems: listItems);
+          },
           child: const Icon(Icons.add),
         ),
         body: SafeArea(
@@ -281,7 +283,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         ));
   }
 
-  Future showaddItemDialog({ListItem? item}) async {
+  Future showaddItemDialog({List<ListItem>? listItems, ListItem? item}) async {
     final newItem = item == null;
     if (item != null) {
       itemController.text = item.itemName;
@@ -312,6 +314,14 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'You must type something';
+                      } else if (value.isNotEmpty &&
+                          listItems!.isNotEmpty &&
+                          item == null &&
+                          listItems
+                              .map((ListItem item) => item.itemName)
+                              .contains(value)) {
+                        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        return 'Item already in list';
                       }
 
                       return null;

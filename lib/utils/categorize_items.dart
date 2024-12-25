@@ -20,7 +20,11 @@ Map<String, List<ListItem>> groupItems(List<ListItem> items) {
     if (!groupedItems.containsKey(item.category)) {
       groupedItems[item.category] = [];
     }
-    groupedItems[item.category]!.add(item);
+    if (item.acquired == true) {
+      groupedItems[item.category]!.add(item);
+    } else {
+      groupedItems[item.category]!.insert(0, item);
+    }
   }
 
   return groupedItems;
