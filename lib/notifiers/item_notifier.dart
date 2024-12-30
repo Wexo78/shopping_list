@@ -119,6 +119,13 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
       return;
     }
   }
+
+  Future<List<ListItem>> suggestItems() async {
+    // Next go and fetch all items from database.
+    // After that try list most items used and see if there are on active list
+    // Return itmes that are not on a list
+    final activeItems = state;
+  }
 }
 
 final itemProvider = StateNotifierProvider<ItemNotifier, List<ListItem>>((ref) {

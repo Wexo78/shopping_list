@@ -23,6 +23,17 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   final GlobalKey<FormState> _keyDialogForm = GlobalKey<FormState>();
   bool isCategorizing = false;
 
+  Future<void> suggestItem() async {
+    return showDialog<void>(
+        context: context,
+        builder: (builder) {
+          return AlertDialog(
+            title: Text('Most used items'),
+            content: ,
+          );
+        });
+  }
+
   Future<void> showDeleteAllDialog() async {
     return showDialog<void>(
         context: context,
