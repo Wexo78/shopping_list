@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shopping_list/models/list_item.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -9,11 +11,20 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
     _fetchItems();
   }
 
+  StreamSubscription? _subscription;
+
   void _fetchItems() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
+
+    print('************ uid on notifier *********');
+    print(uid);
+    print('************ uid on notifier *********');
     final FirebaseFirestore db = FirebaseFirestore.instance;
 
-    db
+    // Cancel any existing subscription to prevent multiple listeners
+    _subscription?.cancel();
+
+    _subscription = db
         .collection('listItems')
         .where('userId', isEqualTo: uid)
         .snapshots()
@@ -22,6 +33,9 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
       final itemList = snapshot.docs.map((doc) {
         return ListItem.fromFireStore(doc.id, doc.data());
       }).toList();
+      print('************ itemList on notifier *********');
+      print(itemList);
+      print('************ itemList on notifier *********');
       state = itemList;
     });
 
@@ -29,6 +43,12 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
     //     await db.collection('listItems').where('userId', isEqualTo: uid).get();
     // docRef.docs.forEach(
     //     (doc) => itemList.add(ListItem.fromFireStore(doc.id, doc.data())));
+  }
+
+  void reset() {
+    _subscription?.cancel();
+    _subscription = null;
+    state = []; // Reset to initial value.
   }
 
   Future<void> deleteItem(String id) async {

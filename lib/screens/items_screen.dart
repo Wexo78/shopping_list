@@ -23,6 +23,13 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   final GlobalKey<FormState> _keyDialogForm = GlobalKey<FormState>();
   bool isCategorizing = false;
 
+  @override
+  void dispose() {
+    itemController.dispose();
+    amountController.dispose();
+    super.dispose();
+  }
+
   Future<void> showDeleteAllDialog() async {
     return showDialog<void>(
         context: context,
@@ -71,7 +78,12 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   @override
   Widget build(BuildContext context) {
     //final Future<List<ListItem>> _listItems = fetchItems();
+
     final List<ListItem> listItems = ref.watch(itemProvider);
+    print('************ listItems on items_screen *********');
+    print(listItems);
+    print('************ listItems on items_screen *********');
+
     final Map<String, List<ListItem>> groupedContent = groupItems(listItems);
 
     return Scaffold(
@@ -268,6 +280,8 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                       icon: const Icon(Icons.exit_to_app),
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
+                        ref.read(itemProvider.notifier).reset();
+
                         widget.toHomeScreen();
                       },
                     ),
@@ -396,12 +410,5 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             ],
           );
         });
-  }
-
-  @override
-  void dispose() {
-    itemController.dispose();
-    amountController.dispose();
-    super.dispose();
   }
 }

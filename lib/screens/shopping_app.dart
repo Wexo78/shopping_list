@@ -6,6 +6,73 @@ import 'package:shopping_list/screens/auth_screen.dart';
 import 'package:shopping_list/screens/items_screen.dart';
 import 'package:shopping_list/screens/start_screen.dart';
 
+/*
+
+final activeScreenProvider = StateProvider((ref) {
+  // Initialize between on preferences
+  return AppPreferences.instance.showWelcomeDialog
+      ? 'welcome-screen'
+      : 'auth-screen';
+});
+
+class ShoppingApp extends StatelessWidget {
+  const ShoppingApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        theme: ThemeData(
+          listTileTheme: ListTileThemeData(
+            dense: true, // Applies dense styling to all ListTiles
+            contentPadding: EdgeInsets.symmetric(horizontal: 8.0),
+          ),
+        ),
+        home: ProviderScope(child: Consumer(builder: (context, ref, _) {
+          // Check user's authentication state and showWelcomeDialog preference
+          final currentUser = FirebaseAuth.instance.currentUser;
+/*
+          if (currentUser != null &&
+              AppPreferences.instance.showWelcomeDialog) {
+            ref.read(activeScreenProvider.notifier).state = 'welcome-screen';
+          } else if (currentUser != null) {
+            ref.read(activeScreenProvider.notifier).state = 'items-screen';
+          } else if (!AppPreferences.instance.showWelcomeDialog) {
+            ref.read(activeScreenProvider.notifier).state = 'auth-screen';
+          }
+          */
+
+          final activeScreen = ref.watch(activeScreenProvider);
+          switch (activeScreen) {
+            case 'items-screen':
+              return ItemsScreen(
+                  toHomeScreen: () => ref
+                      .read(activeScreenProvider.notifier)
+                      .state = 'auth-screen');
+
+            case 'auth-screen':
+              return AuthScreen(
+                  toItemsScreen: () => ref
+                      .read(activeScreenProvider.notifier)
+                      .state = 'items-screen');
+
+            default:
+              return StartScreen(
+                  toListScreen: () => ref
+                      .read(activeScreenProvider.notifier)
+                      .state = 'auth-screen',
+                  updateShowedWelcome: (value) {
+                    if (value) {
+                      ref.read(activeScreenProvider.notifier).state =
+                          'auth-screen';
+                    }
+                  });
+          }
+        })));
+  }
+}
+
+*/
+
 class ShoppingApp extends StatefulWidget {
   const ShoppingApp({super.key});
 
