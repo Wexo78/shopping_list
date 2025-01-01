@@ -107,90 +107,94 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
               : isCategorizing
                   ? Center(child: CircularProgressIndicator())
                   : Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
                       child: Center(
                         child: Column(
                           children: [
                             //      Center(child: const Text('Item List')),
                             Expanded(
-                              child: ListView(
-                                padding: EdgeInsets.zero,
-                                children:
-                                    groupedContent.entries.expand((entry) {
-                                  final category = entry.key;
-                                  final items = entry.value;
+                              child: Scrollbar(
+                                thumbVisibility: true,
+                                child: ListView(
+                                  padding: EdgeInsets.zero,
+                                  children:
+                                      groupedContent.entries.expand((entry) {
+                                    final category = entry.key;
+                                    final items = entry.value;
 
-                                  return [
-                                    // Add category header
-                                    Text(
-                                      category,
-                                      style: TextStyle(
-                                          color: Colors.purple,
-                                          fontSize: Theme.of(context)
-                                              .textTheme
-                                              .titleMedium
-                                              ?.fontSize),
-                                    ),
-                                    // Add items under the category
-                                    ...items.map(
-                                      (item) => ListTile(
-                                        dense: true,
-                                        minVerticalPadding: 0,
-                                        visualDensity: VisualDensity.compact,
-                                        contentPadding: EdgeInsets.zero,
-                                        key: ValueKey(item.id),
-                                        leading: Text(
-                                          item.amount.toString(),
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            decoration: item.acquired
-                                                ? TextDecoration.lineThrough
-                                                : TextDecoration.none,
-                                          ),
-                                        ),
-                                        trailing: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            IconButton(
-                                                onPressed: () {
-                                                  //  deleteItem(item.id);
-                                                  showaddItemDialog(item: item);
-                                                  setState(() {});
-                                                },
-                                                icon: const Icon(Icons.edit)),
-                                            IconButton(
-                                                onPressed: () async {
-                                                  //await deleteItem(item.id);
-                                                  await ref
-                                                      .read(
-                                                          itemProvider.notifier)
-                                                      .deleteItem(item.id);
-                                                },
-                                                icon:
-                                                    Icon(Icons.delete_rounded)),
-                                          ],
-                                        ),
-                                        title: GestureDetector(
-                                          onTap: () async {
-                                            // await toggleAcquiredProvider(item);
-
-                                            ref
-                                                .read(itemProvider.notifier)
-                                                .toggleAcquiredProvider(item);
-                                          },
-                                          child: Text(
-                                            item.itemName,
+                                    return [
+                                      // Add category header
+                                      Text(
+                                        category,
+                                        style: TextStyle(
+                                            color: Colors.purple,
+                                            fontSize: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium
+                                                ?.fontSize),
+                                      ),
+                                      // Add items under the category
+                                      ...items.map(
+                                        (item) => ListTile(
+                                          dense: true,
+                                          minVerticalPadding: 0,
+                                          visualDensity: VisualDensity.compact,
+                                          contentPadding: EdgeInsets.zero,
+                                          key: ValueKey(item.id),
+                                          leading: Text(
+                                            item.amount.toString(),
                                             style: TextStyle(
+                                              fontSize: 12,
                                               decoration: item.acquired
                                                   ? TextDecoration.lineThrough
                                                   : TextDecoration.none,
                                             ),
                                           ),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                  onPressed: () {
+                                                    //  deleteItem(item.id);
+                                                    showaddItemDialog(
+                                                        item: item);
+                                                    setState(() {});
+                                                  },
+                                                  icon: const Icon(Icons.edit)),
+                                              IconButton(
+                                                  onPressed: () async {
+                                                    //await deleteItem(item.id);
+                                                    await ref
+                                                        .read(itemProvider
+                                                            .notifier)
+                                                        .deleteItem(item.id);
+                                                  },
+                                                  icon: Icon(
+                                                      Icons.delete_rounded)),
+                                            ],
+                                          ),
+                                          title: GestureDetector(
+                                            onTap: () async {
+                                              // await toggleAcquiredProvider(item);
+
+                                              ref
+                                                  .read(itemProvider.notifier)
+                                                  .toggleAcquiredProvider(item);
+                                            },
+                                            child: Text(
+                                              item.itemName,
+                                              style: TextStyle(
+                                                decoration: item.acquired
+                                                    ? TextDecoration.lineThrough
+                                                    : TextDecoration.none,
+                                              ),
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                    )
-                                  ];
-                                }).toList(),
+                                      )
+                                    ];
+                                  }).toList(),
+                                ),
                               ),
                             ),
                           ],
