@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -21,6 +22,7 @@ class AboutContent extends StatelessWidget {
           }
 
           final packageInfo = snapshot.data!;
+          final email = FirebaseAuth.instance.currentUser!.email;
 
           return SizedBox(
             height: 300,
@@ -34,7 +36,11 @@ class AboutContent extends StatelessWidget {
                   _infoTile('Build signature', packageInfo.buildSignature),
                   _infoTile(
                     'Installer store',
-                    packageInfo.installerStore ?? 'not available',
+                    packageInfo.installerStore ?? 'Not available',
+                  ),
+                  _infoTile(
+                    'Username',
+                    email.toString(),
                   ),
                 ],
               ),
