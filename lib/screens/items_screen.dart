@@ -303,9 +303,14 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
 
   Future showaddItemDialog({List<ListItem>? listItems, ListItem? item}) async {
     final newItem = item == null;
+    bool editItem = false;
     if (item != null) {
+      print('item in adhowAddItemDialog: $item');
+      editItem = true;
       itemController.text = item.itemName;
       amountController.text = item.amount.toString();
+      print(
+          'item.Controller.text in adhowAddItemDialog: ${itemController.text}');
     }
     return showDialog(
         context: context,
@@ -317,6 +322,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                 children: <Widget>[
                   TextFormField(
                     // initialValue: editItem ? item.itemName : '',
+                    // initialValue: editItem ? item!.itemName : '',
                     controller: itemController,
                     textCapitalization: TextCapitalization.sentences,
                     decoration: const InputDecoration(
@@ -332,6 +338,8 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     validator: (value) {
                       if (value!.isEmpty) {
                         return 'You must type something';
+                      } else if (value.isNotEmpty && editItem) {
+                        return null;
                       } else if (value.isNotEmpty &&
                           listItems!.isNotEmpty &&
                           item == null &&
@@ -393,7 +401,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     itemController.clear();
                     amountController.clear();
 
-                    setState(() {});
+                    // setState(() {});
 
                     // Delay the pop to ensure the widget has been disposed
                     if (mounted) {
