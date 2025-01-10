@@ -30,29 +30,33 @@ Map<String, List<ListItem>> groupItems(List<ListItem> items) {
   return groupedItems;
 }
 
-Future<List<ListItem>> parseAndGroupItems(List<ListItem> items,
+Future<void> parseAndGroupItems(List<ListItem> items,
     Map<String, List<String>> responseText, WidgetRef ref) async {
   Map<String, List<String>> categorizedItems = {};
 
   for (var item in items) {
     item.category = 'Uncategorized'; // Default category
 
-    responseText.forEach((categoryName, keywords) {
-      print(categoryName);
+    //   responseText.forEach((categoryName, keywords) {
+    for (var entry in responseText.entries) {
+      String categoryName = entry.key;
+      List<String> keywords = entry.value;
+
       if (keywords.any((keyword) =>
           item.itemName.toLowerCase().contains(keyword.toLowerCase()))) {
         print(categoryName);
         // editItem(item.id, item.itemName, item.amount!, categoryName);
-        ref
+        await ref
             .read(itemProvider.notifier)
             .editItem(item.id, item.itemName, item.amount!, categoryName);
 
         //  item.category = categoryName;
       }
-    });
+    }
+    //  });  //forEach
   }
 
-  return items;
+  return;
 }
 
 Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {

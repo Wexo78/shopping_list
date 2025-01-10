@@ -81,7 +81,11 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
 
     final List<ListItem> listItems = ref.watch(itemProvider);
     print('************ listItems on items_screen *********');
-    print(listItems);
+    for (ListItem item in listItems) {
+      print(item.itemName);
+      print(item.category);
+    }
+
     print('************ listItems on items_screen *********');
 
     final Map<String, List<ListItem>> groupedContent = groupItems(listItems);
@@ -247,6 +251,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                           final testResult = await categorizeItems(content);
 
                           await parseAndGroupItems(content, testResult, ref);
+                          ref.invalidate(itemProvider);
                         } catch (e) {
                           if (!context.mounted) return;
                           ScaffoldMessenger.of(context).showSnackBar(

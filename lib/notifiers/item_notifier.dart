@@ -74,7 +74,7 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
     //  state = [...state, newItem];
   }
 
-  void editItem(
+  Future<void> editItem(
       String id, String itemName, String amount, String category) async {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
