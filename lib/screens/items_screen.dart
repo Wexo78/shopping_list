@@ -264,7 +264,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                       },
                     ),
                     Text(
-                      'Categorize',
+                      'AI-Categorize',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
                   ],
