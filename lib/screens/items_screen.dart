@@ -5,6 +5,7 @@ import 'package:shopping_list/models/list_item.dart';
 import 'package:shopping_list/notifiers/item_notifier.dart';
 import 'package:shopping_list/utils/categorize_items.dart';
 import 'package:shopping_list/widgets/about_content.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
   const ItemsScreen({required this.toHomeScreen, super.key});
@@ -80,13 +81,14 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
     //final Future<List<ListItem>> _listItems = fetchItems();
 
     final List<ListItem> listItems = ref.watch(itemProvider);
-    print('************ listItems on items_screen *********');
-    for (ListItem item in listItems) {
-      print(item.itemName);
-      print(item.category);
-    }
 
-    print('************ listItems on items_screen *********');
+    // print('************ listItems on items_screen *********');
+    // for (ListItem item in listItems) {
+    //   print(item.itemName);
+    //   print(item.category);
+    // }
+
+    // print('************ listItems on items_screen *********');
 
     final Map<String, List<ListItem>> groupedContent = groupItems(listItems);
 
@@ -325,39 +327,58 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
               key: _keyDialogForm,
               child: Column(
                 children: <Widget>[
-                  TextFormField(
-                    // initialValue: editItem ? item.itemName : '',
-                    // initialValue: editItem ? item!.itemName : '',
-                    controller: itemController,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration(
-                      label: Text('Grocery Item'),
-                    ),
-                    maxLength: 50,
-                    textAlign: TextAlign.center,
-                    //      onSaved: (val) {
-                    //        titleController.text = val;
-                    //        setState(() {});
-                    //      },
-                    autovalidateMode: AutovalidateMode.always,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'You must type something';
-                      } else if (value.isNotEmpty && editItem) {
-                        return null;
-                      } else if (value.isNotEmpty &&
-                          listItems!.isNotEmpty &&
-                          item == null &&
-                          listItems
-                              .map((ListItem item) => item.itemName)
-                              .contains(value)) {
-                        // ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        return 'Item already in list';
-                      }
+                  TypeAheadField(
+                      controller: itemController,
+                      itemBuilder: (context, suggestion) {
+                        return ListTile(title: Text(suggestion));
+                      },
+                      onSelected: (suggestion) {
+                        itemController.text = suggestion;
+                      },
+                      suggestionsCallback: (pattern) async {
+                        return ['Apple', 'Banana', 'Orange']
+                            .where((item) => item
+                                .toLowerCase()
+                                .contains(pattern.toLowerCase()))
+                            .toList();
+                      },
+                      builder: (context, controller, focusNode) {
+                        return TextFormField(
+                          // initialValue: editItem ? item.itemName : '',
+                          // initialValue: editItem ? item!.itemName : '',
 
-                      return null;
-                    },
-                  ),
+                          controller: controller,
+                          focusNode: focusNode,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: const InputDecoration(
+                            label: Text('Grocery Item'),
+                          ),
+                          maxLength: 50,
+                          textAlign: TextAlign.center,
+                          //      onSaved: (val) {
+                          //        titleController.text = val;
+                          //        setState(() {});
+                          //      },
+                          autovalidateMode: AutovalidateMode.always,
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'You must type something';
+                            } else if (value.isNotEmpty && editItem) {
+                              return null;
+                            } else if (value.isNotEmpty &&
+                                listItems!.isNotEmpty &&
+                                item == null &&
+                                listItems
+                                    .map((ListItem item) => item.itemName)
+                                    .contains(value)) {
+                              // ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              return 'Item already in list';
+                            }
+
+                            return null;
+                          },
+                        );
+                      }),
                   TextFormField(
                     //  initialValue: editItem ? item.amount.toString() : '',
                     controller: amountController,

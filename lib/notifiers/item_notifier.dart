@@ -33,9 +33,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
       final itemList = snapshot.docs.map((doc) {
         return ListItem.fromFireStore(doc.id, doc.data());
       }).toList();
-      print('************ itemList on notifier *********');
-      print(itemList);
-      print('************ itemList on notifier *********');
       state = itemList;
     });
 
