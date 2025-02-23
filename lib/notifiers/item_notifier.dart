@@ -16,9 +16,9 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
   void _fetchItems() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
 
-    print('************ uid on notifier *********');
-    print(uid);
-    print('************ uid on notifier *********');
+    // print('************ uid on notifier *********');
+    // print(uid);
+    // print('************ uid on notifier *********');
     final FirebaseFirestore db = FirebaseFirestore.instance;
 
     // Cancel any existing subscription to prevent multiple listeners
@@ -33,9 +33,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
       final itemList = snapshot.docs.map((doc) {
         return ListItem.fromFireStore(doc.id, doc.data());
       }).toList();
-      print('************ itemList on notifier *********');
-      print(itemList);
-      print('************ itemList on notifier *********');
       state = itemList;
     });
 
@@ -71,6 +68,13 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
     final docId = docRef.id;
     ListItem newItem =
         ListItem(id: docId, itemName: itemName, userId: uid, amount: amount);
+
+    final listDocRef =
+        FirebaseFirestore.instance.collection('userItems').doc(uid);
+
+    await listDocRef.set({
+      itemName: FieldValue.increment(1),
+    }, SetOptions(merge: true));
     //  state = [...state, newItem];
   }
 
