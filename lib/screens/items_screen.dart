@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shopping_list/models/list_item.dart';
 import 'package:shopping_list/notifiers/item_notifier.dart';
 import 'package:shopping_list/utils/categorize_items.dart';
+import 'package:shopping_list/utils/get_suggestions.dart';
 import 'package:shopping_list/widgets/about_content.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 
@@ -311,6 +312,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   Future showaddItemDialog({List<ListItem>? listItems, ListItem? item}) async {
     final newItem = item == null;
     bool editItem = false;
+    final suggestions = await getSuggestions();
     if (item != null) {
       print('item in adhowAddItemDialog: $item');
       editItem = true;
@@ -328,6 +330,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
               child: Column(
                 children: <Widget>[
                   TypeAheadField(
+                      hideOnEmpty: true,
                       controller: itemController,
                       itemBuilder: (context, suggestion) {
                         return ListTile(title: Text(suggestion));
@@ -336,7 +339,11 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                         itemController.text = suggestion;
                       },
                       suggestionsCallback: (pattern) async {
-                        return ['Apple', 'Banana', 'Orange']
+                        if (pattern == '') {
+                          return [];
+                        }
+
+                        return suggestions
                             .where((item) => item
                                 .toLowerCase()
                                 .contains(pattern.toLowerCase()))
@@ -442,6 +449,8 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
               ),
               ElevatedButton(
                   onPressed: () {
+                    itemController.clear();
+                    amountController.clear();
                     Navigator.pop(context);
                   },
                   child: const Text('Cancel')),
