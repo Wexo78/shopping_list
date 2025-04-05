@@ -471,30 +471,29 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       builder: (context) {
-        return Wrap(
-          children: [
-            ListTile(
-              leading: Icon(Icons.delete_forever, color: Colors.red),
-              title: Text('Delete All'),
-              onTap: () async {
-                await _showDeleteAllDialog(); // Call delete all function
-                if (!mounted) return;
-                Navigator.pop(context);
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.delete_sweep, color: Colors.orange),
-              title: Text('Delete Collected'),
-              onTap: () async {
-                ref.read(itemProvider.notifier).deleteCollected();
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.delete_forever, color: Colors.red),
+                title: Text('Delete All'),
+                onTap: () async {
+                  await _showDeleteAllDialog(); // Call delete all function
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete_sweep, color: Colors.orange),
+                title: Text('Delete Collected'),
+                onTap: () async {
+                  ref.read(itemProvider.notifier).deleteCollected();
 
-                Navigator.pop(context);
-              },
-            ),
-            const SizedBox(
-              height: 5,
-            )
-          ],
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
         );
       },
     );
