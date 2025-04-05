@@ -1,17 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:shopping_list/models/list_item.dart';
 import 'package:shopping_list/notifiers/item_notifier.dart';
 import 'package:shopping_list/utils/categorize_items.dart';
 import 'package:shopping_list/utils/get_suggestions.dart';
 import 'package:shopping_list/widgets/about_content.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 class ItemsScreen extends ConsumerStatefulWidget {
-  const ItemsScreen({required this.toHomeScreen, super.key});
-
   final void Function() toHomeScreen;
+
+  const ItemsScreen({required this.toHomeScreen, super.key});
 
   @override
   ConsumerState<ItemsScreen> createState() {
@@ -24,58 +24,6 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
   final TextEditingController amountController = TextEditingController();
   final GlobalKey<FormState> _keyDialogForm = GlobalKey<FormState>();
   bool isCategorizing = false;
-
-  @override
-  void dispose() {
-    itemController.dispose();
-    amountController.dispose();
-    super.dispose();
-  }
-
-  Future<void> showDeleteAllDialog() async {
-    return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Delete all?'),
-            content: const Text(
-                'If you continue, all items from the list will disappear.'),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () async {
-                    // await deleteAll();
-                    ref.read(itemProvider.notifier).deleteAll();
-                    if (!mounted) return;
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Delete')),
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Cancel'))
-            ],
-          );
-        });
-  }
-
-  Future<void> showAbout() async {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('About'),
-            content: const AboutContent(),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text('Back'))
-            ],
-          );
-        });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -210,6 +158,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     ),
         ),
         bottomNavigationBar: BottomAppBar(
+          color: Colors.white,
           padding: EdgeInsets.all(0),
           child: Padding(
             padding: EdgeInsets.zero,
@@ -222,13 +171,14 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
+                        color: Colors.red,
                         onPressed: () async {
-                          await showDeleteAllDialog();
+                          await _showDeleteOptions(context);
                         },
                         icon: Icon(Icons.delete),
                       ),
                       Text(
-                        'Delete all',
+                        'Delete…',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],
@@ -238,6 +188,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
+                      color: Colors.green,
                       icon: Icon(Icons.category),
                       onPressed: () async {
                         setState(() {
@@ -276,6 +227,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
+                      color: Colors.blue,
                       icon: const Icon(Icons.info),
                       onPressed: showAbout,
                     ),
@@ -289,6 +241,7 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
+                      color: Colors.brown,
                       icon: const Icon(Icons.exit_to_app),
                       onPressed: () async {
                         await FirebaseAuth.instance.signOut();
@@ -307,6 +260,31 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             ),
           ),
         ));
+  }
+
+  @override
+  void dispose() {
+    itemController.dispose();
+    amountController.dispose();
+    super.dispose();
+  }
+
+  Future<void> showAbout() async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('About'),
+            content: const AboutContent(),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Back'))
+            ],
+          );
+        });
   }
 
   Future showaddItemDialog({List<ListItem>? listItems, ListItem? item}) async {
@@ -457,5 +435,67 @@ class _ItemsScreenState extends ConsumerState<ItemsScreen> {
             ],
           );
         });
+  }
+
+  Future<void> _showDeleteAllDialog() async {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Delete all?'),
+            content: const Text(
+                'If you continue, all items from the list will disappear.'),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () async {
+                    // await deleteAll();
+                    ref.read(itemProvider.notifier).deleteAll();
+                    if (!mounted) return;
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Delete')),
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('Cancel'))
+            ],
+          );
+        });
+  }
+
+  Future<void> _showDeleteOptions(BuildContext context) async {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: Icon(Icons.delete_forever, color: Colors.red),
+                title: Text('Delete All'),
+                onTap: () async {
+                  await _showDeleteAllDialog(); // Call delete all function
+                  if (!mounted) return;
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.delete_sweep, color: Colors.orange),
+                title: Text('Delete Collected'),
+                onTap: () async {
+                  ref.read(itemProvider.notifier).deleteCollected();
+
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }
