@@ -122,6 +122,26 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
     // state = [];
   }
 
+  Future<void> deleteCollected() async {
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+    final snapshot = await FirebaseFirestore.instance
+        .collection('listItems')
+        .where('userId', isEqualTo: uid)
+        .where('acquired', isEqualTo: true)
+        .get();
+
+    // Use a batch for efficient deletion
+    final batch = FirebaseFirestore.instance.batch();
+    for (DocumentSnapshot ds in snapshot.docs) {
+      batch.delete(ds.reference);
+    }
+
+    // Commit the batch
+    await batch.commit();
+
+    // state = [];
+  }
+
   Future<void> toggleAcquiredProvider(ListItem item) async {
     if (item.id.isNotEmpty) {
       final newValue = item.toggleAcquired();
