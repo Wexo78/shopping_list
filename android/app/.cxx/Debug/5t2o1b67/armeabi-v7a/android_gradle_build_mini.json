@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/wexo/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/wexo/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/wexo/Projects/shopping_list/android/app/.cxx/Debug/5t2o1b67/armeabi-v7a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/wexo/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/wexo/Projects/shopping_list/android/app/.cxx/Debug/5t2o1b67/armeabi-v7a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}

@@ -1,0 +1,2 @@
+/Users/wexo/Projects/shopping_list/android/app/.cxx/RelWithDebInfo/473o5l31/x86/CMakeFiles/edit_cache.dir
+/Users/wexo/Projects/shopping_list/android/app/.cxx/RelWithDebInfo/473o5l31/x86/CMakeFiles/rebuild_cache.dir

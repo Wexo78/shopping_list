@@ -1,0 +1,28 @@
+{
+  "buildFiles": [
+    "/Users/wexo/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/wexo/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/wexo/Projects/shopping_list/android/app/.cxx/RelWithDebInfo/473o5l31/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/wexo/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/wexo/Projects/shopping_list/android/app/.cxx/RelWithDebInfo/473o5l31/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {},
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/wexo/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/wexo/Library/Android/sdk/ndk/27.0.12077973/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": []
+}
