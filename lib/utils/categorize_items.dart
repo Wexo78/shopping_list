@@ -37,23 +37,17 @@ Future<void> parseAndGroupItems(List<ListItem> items,
   for (var item in items) {
     item.category = 'Uncategorized'; // Default category
 
-    //   responseText.forEach((categoryName, keywords) {
     for (var entry in responseText.entries) {
       String categoryName = entry.key;
       List<String> keywords = entry.value;
 
       if (keywords.any((keyword) =>
           item.itemName.toLowerCase().contains(keyword.toLowerCase()))) {
-        print(categoryName);
-        // editItem(item.id, item.itemName, item.amount!, categoryName);
         await ref
             .read(itemProvider.notifier)
             .editItem(item.id, item.itemName, item.amount!, categoryName);
-
-        //  item.category = categoryName;
       }
     }
-    //  });  //forEach
   }
 
   return;
@@ -102,10 +96,6 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
       }),
     );
 
-    // Log the response status code and body for debugging
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
-
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
       // Check if the 'choices' array exists and is not empty
@@ -130,8 +120,7 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
       }
     } else {
       final error = jsonDecode(response.body)['error'];
-      print(
-          'Error: ${error['message']}. Status code: ${response.statusCode}, ');
+
       throw Exception(
           'Error: ${error['message']}. Status code: ${response.statusCode}, ');
     }

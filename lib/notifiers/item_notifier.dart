@@ -15,10 +15,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
 
   void _fetchItems() async {
     final uid = FirebaseAuth.instance.currentUser!.uid;
-
-    // print('************ uid on notifier *********');
-    // print(uid);
-    // print('************ uid on notifier *********');
     final FirebaseFirestore db = FirebaseFirestore.instance;
 
     // Cancel any existing subscription to prevent multiple listeners
@@ -35,11 +31,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
       }).toList();
       state = itemList;
     });
-
-    // final docRef =
-    //     await db.collection('listItems').where('userId', isEqualTo: uid).get();
-    // docRef.docs.forEach(
-    //     (doc) => itemList.add(ListItem.fromFireStore(doc.id, doc.data())));
   }
 
   void reset() {
@@ -51,7 +42,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
   Future<void> deleteItem(String id) async {
     final FirebaseFirestore db = FirebaseFirestore.instance;
     await db.collection('listItems').doc(id).delete();
-    // state = state.where((item) => item.id != id).toList();
   }
 
   Future<void> addItem(String itemName, String amount) async {
@@ -75,7 +65,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
     await listDocRef.set({
       itemName: FieldValue.increment(1),
     }, SetOptions(merge: true));
-    //  state = [...state, newItem];
   }
 
   Future<void> editItem(
@@ -93,14 +82,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
       'userId': user.uid,
     };
     await db.collection('listItems').doc(id).set(data, SetOptions(merge: true));
-    //  final item = state.firstWhere((item) => item.id == id);
-    // state = [
-    //   for (final item in state)
-    //     if (item.id == id)
-    //       item.copyWith(name: itemName, amount: amount, category: category)
-    //     else
-    //       item,
-    // ];
   }
 
   Future<void> deleteAll() async {
@@ -151,14 +132,6 @@ class ItemNotifier extends StateNotifier<List<ListItem>> {
           .collection('listItems')
           .doc(item.id)
           .set(data, SetOptions(merge: true));
-
-      // state = [
-      //   for (final listItem in state)
-      //     if (listItem.id == item.id)
-      //       item.copyWith(acquired: newValue)
-      //     else
-      //       item,
-      // ];
     } else {
       return;
     }
