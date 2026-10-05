@@ -49,3 +49,9 @@ android/key.properties
 
 # Environment file
 .env
+
+android/app/google-services.json
+ios/Runner/GoogleService-Info.plist
+
+**/Flutter/flutter_export_environment.sh
+**/Flutter/Generated.xcconfig
