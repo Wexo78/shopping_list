@@ -104,9 +104,12 @@ It has provided practice in structuring a Flutter application, managing state wi
 ## Screenshots
 
 List view:
+<p>
+  <img src="list-view.png" alt="Shopping list view" width="300">
+</p>
 
-![alt text](image.png)
 
 Adding item:
-
-![alt text](image-1.png)
+<p>
+  <img src="add-item.png" alt="Adding an item" width="300">
+</p>
