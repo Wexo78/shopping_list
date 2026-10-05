@@ -96,9 +96,9 @@ It has provided practice in structuring a Flutter application, managing state wi
 
 - Move OpenAI requests to a backend and store the API key securely
 - Improve error handling and input validation
-- Replace the default widget test with application-specific tests
+- Add application-specific tests.
 - Support shared lists between separate user accounts
-- Clean up obsolete code and generated files
+
 
 
 ## Screenshots
