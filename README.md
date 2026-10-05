@@ -99,3 +99,14 @@ It has provided practice in structuring a Flutter application, managing state wi
 - Replace the default widget test with application-specific tests
 - Support shared lists between separate user accounts
 - Clean up obsolete code and generated files
+
+
+## Screenshots
+
+List view:
+
+![alt text](image.png)
+
+Adding item:
+
+![alt text](image-1.png)
