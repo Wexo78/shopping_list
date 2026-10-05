@@ -55,11 +55,26 @@ class _ShoppingAppState extends State<ShoppingApp> {
         : AuthScreen(toItemsScreen: itemsScreen);
     final currentUser = FirebaseAuth.instance.currentUser;
 
+    final showItems = activeScreen == 'items_screen' ||
+        (currentUser != null && (!showWelcomeScreen || showedWelcome));
+
+    if (showItems) {
+      screenWidget = ItemsScreen(
+        toHomeScreen: authScreen,
+      );
+    } else if (activeScreen == 'auth_screen') {
+      screenWidget = AuthScreen(
+        toItemsScreen: itemsScreen,
+      );
+    }
+
+    /*
     if (currentUser != null && showWelcomeScreen == false) {
       itemsScreen();
     } else if (currentUser != null && showedWelcome == true) {
       itemsScreen();
     }
+    */
 
     if (activeScreen == 'items_screen') {
       screenWidget = ItemsScreen(
