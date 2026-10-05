@@ -24,34 +24,6 @@ class _StartScreenState extends State<StartScreen> {
   late Timer _autoSwipeTimer;
   bool _dontShowAgain = false;
 
-/*
-  @override
-  void initState() {
-    super.initState();
-
-    _pageController = PageController(initialPage: _currentPage);
-
-    // Start auto-swiping
-    _autoSwipeTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < _totalPages - 1) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
-
-      _pageController.animateToPage(_currentPage,
-          duration: const Duration(milliseconds: 500), curve: Curves.easeInOut);
-    });
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    _autoSwipeTimer.cancel();
-    super.dispose();
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,84 +99,6 @@ class _StartScreenState extends State<StartScreen> {
           ),
         ],
       ),
-
-      /* 
-      SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: ListView(
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Text(
-                'Shopping list with AI',
-                style: GoogleFonts.lato(
-                  fontWeight: FontWeight.bold,
-                ),
-                textScaler: const TextScaler.linear(1.5),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 30),
-              Text(
-                'About app',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                'With this app you can use collaborated shopping lists. Application categorizes shopping items so in shop it\'s easier for you purchase groceries.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const Divider(thickness: 1.0, height: 40.0),
-              Text(
-                'What next',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
-              const SizedBox(
-                height: 8,
-              ),
-              Text(
-                'Next step is to create an account. Please use valid email address so if you don\'t remember your password you receive a link for renewal password into your email. After creating account you can give email and password anyone you want to share shopping list with. Enjoy.',
-                style: Theme.of(context).textTheme.bodySmall,
-              ),
-              const SizedBox(
-                height: 100,
-              ),
-              Spacer(),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Checkbox(
-                    value: _dontShowAgain,
-                    onChanged: (value) {
-                      setState(() {
-                        _dontShowAgain = value ?? false;
-                      });
-                    },
-                  ),
-                  Text("Don't show this screen again"),
-                ],
-              ),
-              TextButton.icon(
-                  icon: const Icon(Icons.arrow_forward_outlined),
-                  onPressed: () async {
-                    if (_dontShowAgain) {
-                      AppPreferences.instance.showWelcomeDialog = false;
-                    }
-                    widget.updateShowedWelcome(true);
-                    widget.toListScreen();
-                  },
-                  label: const Text(
-                    'Get started',
-                    style: TextStyle(fontSize: 25),
-                  ))
-            ],
-          ),
-        ),
-      ),
-      */
     );
   }
 }
