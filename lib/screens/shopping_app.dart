@@ -76,16 +76,6 @@ class _ShoppingAppState extends State<ShoppingApp> {
     }
     */
 
-    if (activeScreen == 'items_screen') {
-      screenWidget = ItemsScreen(
-        toHomeScreen: authScreen,
-      );
-    } else if (activeScreen == 'auth_screen') {
-      screenWidget = AuthScreen(
-        toItemsScreen: itemsScreen,
-      );
-    }
-
     return MaterialApp(
         theme: ThemeData(
           listTileTheme: ListTileThemeData(
