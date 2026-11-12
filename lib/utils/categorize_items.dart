@@ -74,30 +74,32 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
         'Authorization': 'Bearer $apiKey',
       },
       body: jsonEncode({
-        'model': 'gpt-3.5-turbo',
+        'model': 'gpt-6-luna',
         'messages': [
           {
             'role': 'system',
-            'content':
-                'You are a helpful assistant that categorizes items into categories such as Vegetables, Dairy Products, etc.'
+            'content': '''
+              Group shopping items into categories.
+              Create category names in English.
+              Preserve item names EXACTLY as provided.
+              Never translate, rename, correct, or shorten item names.
+              Include each item exactly once.
+              Return only a JSON object where keys are category names
+              and values are arrays of the original item names.
+              '''
           },
           {
             'role': 'user',
-            'content':
-                """Categorize in english the following items: $itemList and return them in the format:
-{
-  "Fruit": ["Apple"],
-  "Dairy Products": ["Milk", "Cheese"],
-  "Vegetables": ["Carrot", "Lettuce"]
-}"""
+            'content': 'Group these items: ${jsonEncode(itemNames)}',
           }
         ],
-        'max_tokens': 1000,
+        'max_completion_tokens': 1000,
+        'reasoning_effort': 'none',
       }),
     );
 
     if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
+      final data = jsonDecode(utf8.decode(response.bodyBytes));
       // Check if the 'choices' array exists and is not empty
       if (data['choices'] != null && data['choices'].isNotEmpty) {
         final content = data['choices'][0]['message']['content'];
@@ -105,7 +107,8 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
         // Check if the content is not null before trimming
         if (content != null) {
           // Decode the response if necessary (if there's an encoding issue)
-          String decodedText = decodeResponse(content).trim();
+          //String decodedText = decodeResponse(content).trim();
+          final decodedText = (content as String).trim();
           final Map<String, dynamic> tempMap = jsonDecode(decodedText);
 
           final Map<String, List<String>> categorizedItems = tempMap.map(
@@ -119,7 +122,7 @@ Future<Map<String, List<String>>> categorizeItems(List<ListItem> items) async {
         throw Exception('No choices in the response');
       }
     } else {
-      final error = jsonDecode(response.body)['error'];
+      final error = jsonDecode(utf8.decode(response.bodyBytes))['error'];
 
       throw Exception(
           'Error: ${error['message']}. Status code: ${response.statusCode}, ');
